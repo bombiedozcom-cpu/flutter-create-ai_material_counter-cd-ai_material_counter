@@ -1,0 +1,215 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {}
+}dependencies:
+  flutter:
+    sdk: flutter
+
+  camera: ^0.11.0
+  image_picker: ^1.1.2 
+  tflite_flutter: ^0.11.0
+  flutter_tts: ^4.0.2
+  google_mlkit_barcode_scanning: ^0.13.0
+  pdf: ^3.11.0
+  path_provider: ^2.1.3import 'package:flutter/material.dart';
+import 'screens/home_screen.dart';
+
+void main() {
+  runApp(const MaterialCounterApp());
+}
+
+class MaterialCounterApp extends StatelessWidget {
+  const MaterialCounterApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'AI Material Counter',
+      theme: ThemeData.dark(),
+      home: const HomeScreen(),import 'package:flutter/material.dart';
+import 'camera_screen.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("AI Material Counter"),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text("Start Scanning"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const CameraScreen(),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
+  @override
+  State<CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+
+  File? image;
+
+  Future pickImage() async {
+    final picked =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (picked != null) {
+      setState(() {
+        image = File(picked.path);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pickImage();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: image == null
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: Image.file(image!),
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    // AI Detection
+                  },
+                  child: const Text("Analyze"),
+                )
+              ],
+            ),
+    );
+  }
+}
+    );
+  }
+}import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class CameraScreen extends StatefulWidget {
+  const CameraScreen({super.key});
+
+  @override
+  State<CameraScreen> createState() => _CameraScreenState();
+}
+
+class _CameraScreenState extends State<CameraScreen> {
+
+  File? image;
+
+  Future pickImage() async {
+    final picked =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+
+    if (picked != null) {
+      setState(() {
+        image = File(picked.path);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pickImage();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: image == null
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  child: Image.file(image!),
+                ),
+
+                ElevatedButton(
+                  onPressed: () {
+                    // AI Detection
+                  },
+                  child: const Text("Analyze"),
+                )import 'package:tflite_flutter/tflite_flutter.dart';
+
+class AIService {
+
+  late Interpreter interpreter;
+
+  Future loadModel() async {
+    interpreter = await Interpreter.fromAsset(
+      'assets/models/yolov8.tflite',
+    );
+  }
+
+  Future detectObjects() async {
+
+    // YOLO Detection import 'package:flutter_tts/flutter_tts.dart';
+
+class VoiceService {
+
+  final FlutterTts tts = FlutterTts();
+
+  Future speak(String text) async {
+    await tts.speak(text);
+  }import 'dart:io';
+import 'package:pdf/widgets.dart' as pw;
+
+class PDFService {
+
+  Future generatePDF() async {
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        build: (context) {
+          return pw.Text("AI Material Report");
+        },
+      ),
+    );
+
+    final file = File("report.pdf");
+
+    await file.writeAsBytes(await pdf.save());
+  }
+}<key>NSCameraUsageDescription</key>
+<string>Camera access needed</string>
+
+<key>NSMicrophoneUsageDescription</key>
+<string>Microphone access needed</string>
+}
+}
+              ],
+            ),
+    );
+  }
+}
